@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"errors"
 )
 
 // the "howler" command
@@ -20,7 +21,7 @@ func main() {
 	}
 	watchDirArg := os.Args[1]
 	err := WatchDirForever(watchDirArg)
-	log.Fatal(err)
+	log.Fatal("Error - ", err)
 }
 
 var verbose = false
@@ -33,7 +34,12 @@ func debugLog(label string, message string) {
 
 // wrap slacker.PostSlackMessage, passing environment variable
 func slack(message string) error {
-	return slacker.PostSlackMessage(message, os.Getenv("HOWLER_SLACK_WEBHOOK_URL"))
+	hookVarName := "SLACK_WEBHOOK_URL"
+	slackHookUrl, exists := os.LookupEnv(hookVarName)
+	if !exists {
+		return errors.New(fmt.Sprintf("Missing environment variable %s", hookVarName))
+	}
+	return slacker.PostSlackMessage(message, slackHookUrl)
 }
 
 func WatchDirForever(dir string) error {
@@ -58,7 +64,7 @@ func WatchDirForever(dir string) error {
 				// @TODO - move all or part of message generation to helper function
 				verb, isWatchType := eventWatchTypes[event.Op.String()]
 				if isWatchType {
-					message := fmt.Sprintf("File %s: %s\n", verb, event.Name)
+					message := fmt.Sprintf("File or directory %s: %s\n", verb, event.Name)
 					debugLog("message", message)
 					err := slack(message)
 					if err != nil {
