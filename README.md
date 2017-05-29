@@ -1,16 +1,8 @@
 # Howler
 
-Watch a directory; get notified through slack when new files are added. 
-
-### Tools
-
-Go 
-fsnotify
-slack api
+Watch a directory; get notified through slack when new files are added.
 
 
-### Process
+### Usage
 
-Watch directory with fsnotify
-Send notificaiton to slack through Go tools (CLI auth?)
-
+Set a `SLACK_WEBHOOK_URL` environment variable with the webhook url of the incoming webhook for your desired slack channel (see [slack's incoming webhook docs](https://api.slack.com/incoming-webhooks)). 
