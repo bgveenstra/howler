@@ -1,13 +1,13 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/bgveenstra/slacker"
 	"github.com/fsnotify/fsnotify"
 	"log"
 	"os"
 	"path/filepath"
-	"errors"
 )
 
 // the "howler" command
